@@ -3,6 +3,8 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'dart:convert';
 import 'package:flutter/services.dart';
 
+import 'dart:developer';
+
 class LoginForm extends StatefulWidget {
   @override
   _LoginFormState createState() => _LoginFormState();
@@ -25,7 +27,37 @@ class _LoginFormState extends State<LoginForm> {
 
     void _loginUser() async {
       var usersList = json.decode(await rootBundle.loadString('database/users.json'));
-
+    
+      if(usersList.containsKey(usernameController.text) && usersList[usernameController.text] == passwordController.text) {
+        log('log user...');
+      } else {
+        return showDialog<void>(
+          context: context,
+          barrierDismissible: false, // user must tap button!
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('AlertDialog Title'),
+              content: SingleChildScrollView(
+                child: ListBody(
+                  children: const <Widget>[
+                    Text('This is a demo alert dialog.'),
+                    Text('Would you like to approve of this message?'),
+                  ],
+                ),
+              ),
+              actions: <Widget>[
+                TextButton(
+                  child: const Text('Approve'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          },
+        );
+        
+      }
     }
 
     final usernameField = TextField(
