@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show rootBundle;
+import 'dart:convert';
+import 'package:flutter/services.dart';
 
 class LoginForm extends StatefulWidget {
   @override
@@ -6,14 +9,29 @@ class LoginForm extends StatefulWidget {
 }
 
 class _LoginFormState extends State<LoginForm> {
+  final usernameController = TextEditingController();
+  final passwordController = TextEditingController();
   TextStyle style = TextStyle(fontFamily: 'Montserrat', fontSize: 15.0);
   
   @override
+  void dispose() {
+    usernameController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+
+    void _loginUser() async {
+      var usersList = json.decode(await rootBundle.loadString('database/users.json'));
+
+    }
 
     final usernameField = TextField(
       obscureText: false,
       style: style,
+      controller: usernameController,
       decoration: InputDecoration(
         contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
         hintText: "Username",
@@ -24,6 +42,7 @@ class _LoginFormState extends State<LoginForm> {
     final passwordField = TextField(
       obscureText: true,
       style: style,
+      controller: passwordController,
       decoration: InputDecoration(
         contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
         hintText: "Password",
@@ -38,15 +57,13 @@ class _LoginFormState extends State<LoginForm> {
         minWidth: MediaQuery.of(context).size.width,
         padding: EdgeInsets.fromLTRB(20, 15, 20, 15),
         textColor: Colors.white,
-        onPressed: () {},
+        onPressed: _loginUser,
         child: Text(
           'Sign In',
           textAlign: TextAlign.center,
         ),
       ),
     );
-
-
 
     return Scaffold(
       body: Center(
