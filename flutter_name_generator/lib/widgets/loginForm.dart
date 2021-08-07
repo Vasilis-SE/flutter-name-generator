@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'dart:convert';
 import 'package:flutter/services.dart';
-
-import 'dart:developer';
+import './randomWords.dart';
 
 class LoginForm extends StatefulWidget {
   @override
@@ -29,7 +28,7 @@ class _LoginFormState extends State<LoginForm> {
       var usersList = json.decode(await rootBundle.loadString('database/users.json'));
     
       if(usersList.containsKey(usernameController.text) && usersList[usernameController.text] == passwordController.text) {
-        log('log user...');
+        Navigator.push(context, MaterialPageRoute(builder: (context) => RandomWords()));
       } else {
         return showDialog<void>(
           context: context,
