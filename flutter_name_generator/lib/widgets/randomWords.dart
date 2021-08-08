@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:english_words/english_words.dart';
+import 'navDrawer.dart';
 
 class RandomWords extends StatefulWidget {
   @override
@@ -92,11 +93,12 @@ class _RandomWordsState extends State<RandomWords> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: false,
+        // leading: IconButton(onPressed: FlutterDraw, icon: Icon(Icons.usb_rounded)),
         title: const Text('Startup Name Generator'),
         backgroundColor: Colors.orange.shade100,
-        actions: [IconButton(onPressed: _pushSaved, icon: Icon(Icons.list))],
+        // actions: [IconButton(onPressed: _pushSaved, icon: Icon(Icons.list))],
       ),
+      drawer: NavDrawer(),
       body: _buildSuggestions(),
     );
   }
