@@ -6,6 +6,7 @@ import 'dart:convert';
 // Internal
 import '../utilities/uiConstants.dart';
 import '../widgets/randomWords.dart';
+import '../widgets/dialogs/simpleAlertDialog.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -16,6 +17,13 @@ class _LoginScreenState extends State<LoginScreen> {
   bool? _rememberMe = false;
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
+
+  @override
+  void dispose() {
+    usernameController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
 
   void _loginUser() async {
     var usersList = json.decode(await rootBundle.loadString('database/users.json'));
@@ -30,30 +38,15 @@ class _LoginScreenState extends State<LoginScreen> {
     } 
     
     // Else, display error
+    var dialogObj = SimpleAlertDialog(
+      title:"Login Error",
+      message: "Either the username or password given is invalid or does not exist!"
+    );
+
     return showDialog<void>(
       context: context,
       barrierDismissible: false, // user must tap button!
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('AlertDialog Title'),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: const <Widget>[
-                Text('This is a demo alert dialog.'),
-                Text('Would you like to approve of this message?'),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('OK'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
+      builder: (BuildContext context) => dialogObj,
     );
   }
 
@@ -286,7 +279,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-  
     return Scaffold(
       body: AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.light,
