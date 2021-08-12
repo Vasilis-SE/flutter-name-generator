@@ -1,7 +1,11 @@
+// External
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../utilities/uiConstants.dart';
+import 'dart:convert';
 
+// Internal
+import '../utilities/uiConstants.dart';
+import '../widgets/randomWords.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -10,13 +14,55 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   bool? _rememberMe = false;
+  final usernameController = TextEditingController();
+  final passwordController = TextEditingController();
 
-  Widget _buildEmailTF() {
+  void _loginUser() async {
+    var usersList = json.decode(await rootBundle.loadString('database/users.json'));
+  
+    // If the username and password exist then redirect to main page (login)
+    if(
+      usersList.containsKey(usernameController.text) && 
+      usersList[usernameController.text] == passwordController.text
+    ) {
+      Navigator.push(context, MaterialPageRoute(builder: (context) => RandomWords()));
+      return;
+    } 
+    
+    // Else, display error
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('AlertDialog Title'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: const <Widget>[
+                Text('This is a demo alert dialog.'),
+                Text('Would you like to approve of this message?'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildUsernameTF() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Text(
-          'Email',
+          'Username',
           style: kLabelStyle,
         ),
         SizedBox(height: 10.0),
@@ -25,6 +71,7 @@ class _LoginScreenState extends State<LoginScreen> {
           decoration: kBoxDecorationStyle,
           height: 60.0,
           child: TextField(
+            controller: usernameController,
             keyboardType: TextInputType.emailAddress,
             style: TextStyle(
               color: Colors.white,
@@ -34,7 +81,7 @@ class _LoginScreenState extends State<LoginScreen> {
               border: InputBorder.none,
               contentPadding: EdgeInsets.only(top: 14.0),
               prefixIcon: Icon(
-                Icons.email,
+                Icons.person,
                 color: Colors.white,
               ),
               hintText: 'Enter your username or email address',
@@ -60,6 +107,7 @@ class _LoginScreenState extends State<LoginScreen> {
           decoration: kBoxDecorationStyle,
           height: 60.0,
           child: TextField(
+            controller: passwordController,
             obscureText: true,
             style: TextStyle(
               color: Colors.white,
@@ -126,25 +174,23 @@ class _LoginScreenState extends State<LoginScreen> {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 25.0),
       width: double.infinity,
-      // child: ElevatedButton(
-      //   elevation: 5.0,
-      //   onPressed: () => print('Login Button Pressed'),
-      //   padding: EdgeInsets.all(15.0),
-      //   shape: RoundedRectangleBorder(
-      //     borderRadius: BorderRadius.circular(30.0),
-      //   ),
-      //   color: Colors.white,
-      //   child: Text(
-      //     'LOGIN',
-      //     style: TextStyle(
-      //       color: Color(0xFF527DAA),
-      //       letterSpacing: 1.5,
-      //       fontSize: 18.0,
-      //       fontWeight: FontWeight.bold,
-      //       fontFamily: 'OpenSans',
-      //     ),
-      //   ),
-      // ),
+      child: MaterialButton(
+        minWidth: MediaQuery.of(context).size.width,
+        padding: EdgeInsets.fromLTRB(20, 15, 20, 15),
+        textColor: Colors.black87,
+        color: Colors.white,
+        onPressed: () => this._loginUser(),
+        child: Text(
+          'Sign In',
+          style: TextStyle(
+            color: Colors.black87,
+            letterSpacing: 1.5,
+            fontSize: 18.0,
+            fontWeight: FontWeight.bold,
+            fontFamily: 'OpenSans',
+          ),
+        ),
+      ),
     );
   }
 
@@ -240,6 +286,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+  
     return Scaffold(
       body: AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.light,
@@ -275,17 +322,13 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      Text(
-                        'Sign In',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontFamily: 'OpenSans',
-                          fontSize: 30.0,
-                          fontWeight: FontWeight.bold,
-                        ),
+                      Image.asset(
+                        'assets/images/banner.png', 
+                        fit: BoxFit.contain,
+                        width: 180.0
                       ),
                       SizedBox(height: 30.0),
-                      _buildEmailTF(),
+                      _buildUsernameTF(),
                       SizedBox(
                         height: 30.0,
                       ),
