@@ -2,6 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:convert';
+import 'package:getwidget/getwidget.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 // Internal
 import '../utilities/uiConstants.dart';
@@ -17,6 +19,7 @@ class _LoginScreenState extends State<LoginScreen> {
   bool? _rememberMe = false;
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
+  final storage = new FlutterSecureStorage();
 
   @override
   void dispose() {
@@ -33,6 +36,7 @@ class _LoginScreenState extends State<LoginScreen> {
       usersList.containsKey(usernameController.text) && 
       usersList[usernameController.text] == passwordController.text
     ) {
+      storage.write(key: 'username', value: usernameController.text);
       Navigator.push(context, MaterialPageRoute(builder: (context) => RandomWords()));
       return;
     } 
@@ -206,43 +210,37 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Widget _buildSocialBtn(Function onTap, AssetImage logo) {
-    return GestureDetector(
-      // onTap: onTap,
-      child: Container(
-        height: 60.0,
-        width: 60.0,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black26,
-              offset: Offset(0, 2),
-              blurRadius: 6.0,
-            ),
-          ],
-          image: DecorationImage(
-            image: logo,
-          ),
-        ),
-      ),
-    );
-  }
-
   Widget _buildSocialBtnRow() {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 30.0),
-      child: Row(
+      child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
-          _buildSocialBtn(
-            () => print('Login with Facebook'),
-            AssetImage('assets/images/logo_facebook.jpg'),
+          GFButton(
+            onPressed: (){},
+            text: "Login with facebook",
+            icon: Image(image: AssetImage('assets/images/logo_facebook.jpg')),
+            type: GFButtonType.solid,
+            blockButton: true,   
+            color: Colors.white, 
+            textStyle: TextStyle(
+              fontSize: 15,
+              color: Colors.black,
+            ),
+            size: GFSize.MEDIUM
           ),
-          _buildSocialBtn(
-            () => print('Login with Google'),
-            AssetImage('assets/images/logo_google.png'),
+          GFButton(
+            onPressed: (){},
+            text: "Login with Gmail",
+            icon: Image(image: AssetImage('assets/images/logo_google.png')),
+            type: GFButtonType.solid,
+            blockButton: true,    
+            color: Colors.deepOrange.shade900,
+            textStyle: TextStyle(
+              fontSize: 15,
+              color: Colors.white,
+            ),
+            size: GFSize.MEDIUM
           ),
         ],
       ),
